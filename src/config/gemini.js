@@ -1,19 +1,14 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from "@google/genai";
 
-export default async function handler(req, res) {
-  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const ai = new GoogleGenAI(process.env.GEMINI_API_KEY);
 
-  const { prompt } = req.body;
-
-  try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
-
-    res.status(200).json({ text });
-  } catch (error) {
-    console.error("Error with Gemini API:", error);
-    res.status(500).json({ error: 'API call failed' });
-  }
+async function runChat(input) {
+  const response = await ai.models.generateContent({
+    model: "gemini-2.0-flash",
+    contents: input,
+  });
+  // console.log(response.text);
+  return response.text;
 }
+
+export default runChat;
